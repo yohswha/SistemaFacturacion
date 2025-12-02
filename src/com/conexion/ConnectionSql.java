@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 
@@ -35,15 +36,50 @@ public class ConnectionSql {
 		}catch(Exception e) {e.printStackTrace();
 		}
 	}
-	//public void put(int codigo,Cliente newCliente) {
-	//	clientes.put(codigo, newCliente);
-	//	System.out.println("Cliente actualizado exitosamente");
+	public void put(Cliente newCliente) {
+		
+		String sql="UPDATE CLIENTES SET Nombres=?,Apellidos=?, Direccion=?,Provincia=?,Genero=? WHERE Codigo=?";
+		try {
+			Connection conn=DriverManager.getConnection(url);
+			PreparedStatement stmt=conn.prepareStatement(sql);
+			stmt.setString(1, newCliente.getNombre());
+			stmt.setString(2, newCliente.getApellido());
+			stmt.setString(3, newCliente.getDireccion());
+			stmt.setString(4, newCliente.getProvincia());
+			stmt.setString(5, newCliente.getGenero());
+			stmt.setInt(6, newCliente.getCodigo());
+			
+			int rowsAffected=stmt.executeUpdate();
+			if(rowsAffected==1) {
+				System.out.println("Cliente actualizado exitosamente!");
 
-//	}
-	//public void delete(int codigo) {
-	//	clientes.remove(codigo);
-	//	System.out.println("Cliente Eliminado exitosamente");
-	//}
+			}
+			else {System.out.println("Cliente no encontrado!\n :(");
+			}
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void delete(Cliente cliente) {
+		String sql="DELETE FROM CLIENTES WHERE CODIGO =?";
+		try {
+			Connection conn =DriverManager.getConnection(url);
+			PreparedStatement stmt=	conn.prepareStatement(sql);
+			stmt.setInt(1, cliente.getCodigo());
+			int rowsAffected=stmt.executeUpdate();
+			
+			if(rowsAffected>0) {System.out.println("Registro Eliminado con exito!");}
+			else {System.out.println("Codigo no encontrado");}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+	}
 	
 	public void GetAll() {
 	try {
